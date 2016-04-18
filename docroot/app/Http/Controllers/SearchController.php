@@ -8,7 +8,13 @@ use App\Http\Requests;
 
 class SearchController extends Controller
 {
-  public function getIndex() {
+  public function getIndex()
+  {
+    return view('search.home');
+  }
+
+  public function search(Request $request)
+  {
     return view('search.home');
   }
 }
