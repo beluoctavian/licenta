@@ -7,6 +7,9 @@
     </head>
     <body>
         <div class="container">
+            @if (!empty($error))
+                <div class="error">{{ $error }}</div>
+            @endif
             <div class="content">
                 <form id="search-form" method="get" action="/search">
                     <input name="q" type="text" maxlength="2048" class="search-text">
