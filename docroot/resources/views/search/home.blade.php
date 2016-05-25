@@ -4,6 +4,8 @@
         <title>Search{{ !empty($_GET['q']) ? " for '{$_GET['q']}'" : '' }}</title>
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+        <script src="{{ URL::asset('assets/libraries/d3/d3.min.js') }}"></script>
+        <script src="{{ URL::asset('assets/libraries/d3/d3-hierarchy/d3-hierarchy.min.js') }}"></script>
     </head>
     <body>
         <div class="container">
