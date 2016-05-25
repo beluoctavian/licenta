@@ -19,7 +19,8 @@ class SearchController extends Controller
    * @return \Illuminate\Pagination\LengthAwarePaginator
    * @throws \Exception
    */
-  public function getSearchResults(Request $request, $engine = 'bing') {
+  public function getSearchResults(Request $request, $engine = 'bing')
+  {
     $query = $request->get('q');
     $results = [];
     switch ($engine) {
@@ -36,6 +37,12 @@ class SearchController extends Controller
         }
         break;
     }
+    return $results;
+  }
+
+  public function search(Request $request)
+  {
+    $results = $this->getSearchResults($request);
 
     $perPage = 10;
     $currentPage = LengthAwarePaginator::resolveCurrentPage();
@@ -45,14 +52,8 @@ class SearchController extends Controller
       'path'  => $request->url(),
       'query' => $request->query(),
     ]);
-    return $paginatedSearchResults;
-  }
-
-  public function search(Request $request)
-  {
-    $results = $this->getSearchResults($request);
 
     return view('search.home')
-      ->with('results', $results);
+      ->with('results', $paginatedSearchResults);
   }
 }
