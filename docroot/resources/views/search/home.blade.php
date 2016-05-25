@@ -25,7 +25,7 @@
                         label: obj.title,
                         url: obj.url,
                         displayUrl: obj.displayUrl,
-                        weight: 1
+                        weight: 'weight' in obj ? obj.weight : 1
                     };
                 }
                 else {
@@ -33,7 +33,7 @@
                     return {
                         label: obj.title,
                         groups: groups,
-                        weight: 1
+                        weight: 'weight' in obj ? obj.weight : 1
                     };
                 }
             };

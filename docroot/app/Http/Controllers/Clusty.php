@@ -16,15 +16,18 @@ class Clusty extends Controller
     $groups = [];
     foreach ($results as $result) {
       $url_components = parse_url($result['url']);
-      if (empty($groups[$url_components['host']])) {
-        $groups[$url_components['host']] = [
-          'title' => $url_components['host'],
+      $host_components = explode('.', $url_components['host']);
+      $host = array_pop($host_components);
+      $host = array_pop($host_components) . '.' . $host;
+      if (empty($groups[$host])) {
+        $groups[$host] = [
+          'title' => $host,
           'children' => [],
           'weight' => 0,
         ];
       }
-      $groups[$url_components['host']]['children'][] = $result;
-      $groups[$url_components['host']]['weight']++;
+      $groups[$host]['children'][] = $result;
+      $groups[$host]['weight']++;
     }
     return array_values($groups);
   }
