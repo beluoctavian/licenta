@@ -19,12 +19,30 @@
         </div>
         <script src="{{ URL::asset('assets/libraries/foamtree-3.4.2/carrotsearch.foamtree.js') }}"></script>
         <script>
+            var createGroupNode = function(obj) {
+                if ('url' in obj) {
+                    return {
+                        label: obj.title,
+                        url: obj.url,
+                        displayUrl: obj.displayUrl,
+                        weight: 1
+                    };
+                }
+                else {
+                    var groups = obj.children.map(createGroupNode);
+                    return {
+                        label: obj.title,
+                        groups: groups,
+                        weight: 1
+                    };
+                }
+            };
             var foamtree = new CarrotSearchFoamTree({
                 id: "visualization",
                 onGroupClick: function (event) {
                     if ('url' in event.group) {
                         event.preventDefault();
-//                        window.location = event.group.url;
+                        window.location = event.group.url;
                     }
                 },
                 fadeDuration: 500
@@ -35,14 +53,7 @@
                     dataType: "json",
                     jsonpCallback: "callback",
                     success: function(data) {
-                        var groups = data.map(function(obj) {
-                            return {
-                                label: obj.title,
-                                url: obj.url,
-                                displayUrl: obj.displayUrl,
-                                weight: 1
-                            };
-                        });
+                        var groups = data.map(createGroupNode);
 
                         foamtree.set({
                             dataObject: { groups: groups },
