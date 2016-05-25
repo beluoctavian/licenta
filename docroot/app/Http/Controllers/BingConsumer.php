@@ -69,9 +69,11 @@ class BingConsumer extends AbstractWebSearchEngine
     while (count($items) < $limit) {
       $json = \Cache::get($this->getCacheKey($query, $start));
       if (empty($json)) {
+        dd('pula');
         $response = $this->makeSearchRequest($query, $start);
         $json = json_decode($response);
-        $expiresAt = Carbon::now()->addMinutes(1440);
+        // 20 days
+        $expiresAt = Carbon::now()->addMinutes(28800);
         \Cache::put($this->getCacheKey($query, $start), $json, $expiresAt);
       }
       if (!empty($json->d) && !empty($json->d->results)) {
