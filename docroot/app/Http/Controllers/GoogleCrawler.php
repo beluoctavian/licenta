@@ -40,50 +40,61 @@ class GoogleCrawler extends Controller
     if (!is_string($query)) {
       throw new \Exception('The query string is not valid.');
     }
-    $url = $this->url . '/search?q=' . urlencode($query);
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_HEADER, TRUE);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-    $contents = curl_exec($ch);
-    curl_close($ch);
-    $redirect_url = NULL;
-    if(preg_match('#Location: (.*)#', $contents, $r)) {
-      $redirect_url = trim($r[1]);
-    }
-    $url = $redirect_url ?: $url;
-    $contents = file_get_contents($url);
-    $doc = new \DOMDocument();
+    $items = [];
+    $start = 0 ;
 
-    // Just because that: http://php.net/manual/ro/domdocument.loadhtml.php#95463
-    libxml_use_internal_errors(true);
-
-    $doc->loadHTML($contents);
-    $container = $doc->getElementById($this->resultsContainerId);
-    foreach ($container->getElementsByTagName('div') as $div) {
-      /** @var \DOMElement $div */
-      if ($div->getAttribute('class') != 'g') {
-        continue;
+    while (count($items) < $limit) {
+      $url = $this->url . '/search?q=' . urlencode($query) . '&start=' . $start;
+      $ch = curl_init($url);
+      curl_setopt($ch, CURLOPT_HEADER, TRUE);
+      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      $contents = curl_exec($ch);
+      curl_close($ch);
+      $redirect_url = NULL;
+      if (preg_match('#Location: (.*)#', $contents, $r)) {
+        $redirect_url = trim($r[1]);
       }
-      $item = [];
-      /** @var \DOMElement $h3 */
-      $h3 = $div->getElementsByTagName('h3')->item(0);
-      $a = $h3->firstChild;
-      $item['url'] = $item['title'] = $item['summary'] = $item['content'] = NULL;
-      $item['url'] = $this->url . $a->getAttribute('href');
-      $item['title'] = strip_tags($a->textContent);
-      foreach ($div->getElementsByTagName('span') as $span) {
-        /** @var \DOMElement $span */
-        if ($span->getAttribute('class') != 'st') {
+      $url = $redirect_url ?: $url;
+      $contents = file_get_contents($url);
+      $doc = new \DOMDocument();
+
+      // Just because that: http://php.net/manual/ro/domdocument.loadhtml.php#95463
+      libxml_use_internal_errors(TRUE);
+
+      $doc->loadHTML($contents);
+      $container = $doc->getElementById($this->resultsContainerId);
+
+      foreach ($container->getElementsByTagName('div') as $div) {
+        if (count($items) >= $limit) {
+          break;
+        }
+        /** @var \DOMElement $div */
+        if ($div->getAttribute('class') != 'g') {
           continue;
         }
-        $item['summary'] = strip_tags($span->textContent);
-        break;
+        $item = [];
+        /** @var \DOMElement $h3 */
+        $h3 = $div->getElementsByTagName('h3')->item(0);
+        $a = $h3->firstChild;
+        $item['url'] = $item['title'] = $item['summary'] = $item['content'] = NULL;
+        $item['url'] = $this->url . $a->getAttribute('href');
+        $item['title'] = strip_tags($a->textContent);
+        foreach ($div->getElementsByTagName('span') as $span) {
+          /** @var \DOMElement $span */
+          if ($span->getAttribute('class') != 'st') {
+            continue;
+          }
+          $item['summary'] = trim(preg_replace('/\s\s+/', ' ', strip_tags($span->textContent)));
+          break;
+        }
+        if (!empty($item['url']) && !empty($item['summary'])) {
+          $items[] = $item;
+        }
       }
-      if (!empty($item['url'])) {
-        $items[] = $item;
-      }
+      $start += 10;
     }
+
     return $items;
   }
 }
