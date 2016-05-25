@@ -25,6 +25,9 @@
                             </div>
                         @endforeach
                     </div>
+                    <div class="paginator">
+                        {!! $results->render() !!}
+                    </div>
                 @endif
             </div>
         </div>
