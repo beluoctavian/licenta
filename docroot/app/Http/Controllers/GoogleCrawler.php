@@ -17,6 +17,10 @@ class GoogleCrawler extends Controller
     $this->url = $url;
   }
 
+  private function buildSearchUrl($query, $start) {
+    return $this->url . '/search?q=' . urlencode($query) . '&start=' . $start;
+  }
+
   /**
    * Returns Google search results for a specific query.
    *
@@ -44,7 +48,7 @@ class GoogleCrawler extends Controller
     $start = 0 ;
 
     while (count($items) < $limit) {
-      $url = $this->url . '/search?q=' . urlencode($query) . '&start=' . $start;
+      $url = $this->buildSearchUrl($query, $start);
       $ch = curl_init($url);
       curl_setopt($ch, CURLOPT_HEADER, TRUE);
       curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
