@@ -48,6 +48,7 @@ class BingConsumer extends AbstractWebSearchEngine
    * @return array
    *  An array of arrays containing:
    *    - url: Url to results webpage
+   *    - displayUrl: Url display text.
    *    - title: Title of webpage
    *    - summary: Summary of webpage content
    *    - content: Parsed content of webpage if the $advanced parameter is set to
@@ -60,8 +61,24 @@ class BingConsumer extends AbstractWebSearchEngine
     }
     $items = [];
     $start = 0;
-    $response = $this->makeSearchRequest($query, $start);
-    $json = json_decode($response);
+    while (count($items) < $limit) {
+      $response = $this->makeSearchRequest($query, $start);
+      $json = json_decode($response);
+      if (!empty($json->d) && !empty($json->d->results)) {
+        foreach ($json->d->results as $result) {
+          if (count($items) >= $limit) {
+            break;
+          }
+          $item = [];
+          $item['url'] = $item['displayUrl'] = $item['title'] = $item['summary'] = $item['content'] = NULL;
+          $item['url'] = $result->Url;
+          $item['displayUrl'] = $result->DisplayUrl;
+          $item['title'] = $result->Title;
+          $item['summary'] = $result->Description;
+          $items[] = $item;
+        }
+      }
+    }
     return $items;
   }
 }
