@@ -37,7 +37,7 @@ class SearchController extends Controller
         }
         break;
     }
-    return $results;
+    return Clusty::groupByWebsite($results);
   }
 
   public function search(Request $request)
