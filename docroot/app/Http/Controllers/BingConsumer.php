@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -35,6 +36,10 @@ class BingConsumer extends AbstractWebSearchEngine
     return curl_exec($process);
   }
 
+  private function getCacheKey($query, $start) {
+    return 'bing_' . urlencode($query) . '_' . $start;
+  }
+
   /**
    * Returns Bing search results for a specific query.
    *
@@ -62,8 +67,13 @@ class BingConsumer extends AbstractWebSearchEngine
     $items = [];
     $start = 0;
     while (count($items) < $limit) {
-      $response = $this->makeSearchRequest($query, $start);
-      $json = json_decode($response);
+      $json = \Cache::get($this->getCacheKey($query, $start));
+      if (empty($json)) {
+        $response = $this->makeSearchRequest($query, $start);
+        $json = json_decode($response);
+        $expiresAt = Carbon::now()->addMinutes(1440);
+        \Cache::put($this->getCacheKey($query, $start), $json, $expiresAt);
+      }
       if (!empty($json->d) && !empty($json->d->results)) {
         foreach ($json->d->results as $result) {
           if (count($items) >= $limit) {
