@@ -55,7 +55,7 @@ class BingConsumer extends AbstractWebSearchEngine
    * TRUE, NULL otherwise
    * @throws \Exception
    */
-  public function search($query, $limit = 10, $advanced = FALSE) {
+  public function search($query, $limit = 50, $advanced = FALSE) {
     if (!is_string($query)) {
       throw new \Exception('The query string is not valid.');
     }
@@ -78,6 +78,7 @@ class BingConsumer extends AbstractWebSearchEngine
           $items[] = $item;
         }
       }
+      $start += 50;
     }
     return $items;
   }
