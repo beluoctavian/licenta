@@ -20,7 +20,7 @@ class SearchController extends Controller
     $gc = new GoogleCrawler();
     $results = [];
     if (!empty($query)) {
-      $results = $gc->search($query, 50);
+      $results = $gc->search($query, 20);
     }
     $perPage = 10;
     $currentPage = LengthAwarePaginator::resolveCurrentPage();
