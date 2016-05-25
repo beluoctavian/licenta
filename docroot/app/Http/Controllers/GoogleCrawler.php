@@ -32,6 +32,17 @@ class GoogleCrawler extends Controller
       throw new \Exception('The query string is not valid.');
     }
     $url = $this->url . '?q=' . urlencode($query);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HEADER, TRUE);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    $contents = curl_exec($ch);
+    curl_close($ch);
+    $redirect_url = NULL;
+    if(preg_match('#Location: (.*)#', $contents, $r)) {
+      $redirect_url = trim($r[1]);
+    }
+    $url = $redirect_url ?: $url;
     $contents = file_get_contents($url);
     $doc = new \DOMDocument();
 
