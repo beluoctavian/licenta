@@ -13,3 +13,4 @@
 
 Route::get('/', 'SearchController@getIndex');
 Route::get('search', 'SearchController@search');
+Route::get('getSearchResults', 'SearchController@getSearchResults');
