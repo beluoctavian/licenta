@@ -1,0 +1,19 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+#visualization {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.container {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+}
+.container #search-form {
+  position: relative;
+  left: -50%;
+}

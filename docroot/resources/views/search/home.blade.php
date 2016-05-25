@@ -4,45 +4,30 @@
         <title>Search{{ !empty($_GET['q']) ? " for '{$_GET['q']}'" : '' }}</title>
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+        <link rel="stylesheet" href="{{ URL::asset('assets/css/style.css') }}">
         <script src="{{ URL::asset('assets/libraries/jquery/jquery-1.12.4.min.js') }}"></script>
     </head>
     <body>
-        <div id="visualization" style="width: 100%; height: 600px"></div>
+        <div id="visualization"></div>
         <div class="container">
-            @if (!empty($error))
-                <div class="error">{{ $error }}</div>
-            @endif
-            <div class="content">
-                <form id="search-form" method="get" action="/search">
-                    <input name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? $_GET['q'] : '' }}">
-                    <button type="submit" class="search-form-submit">
-                        <span class="fa fa-search" aria-hidden="true"></span>
-                    </button>
-                </form>
-                @if (!empty($results))
-                    <div class="results">
-                        @foreach($results as $result)
-                            <div class="item">
-                                <h3><a href="{{ $result['url'] }}">{{ $result['title'] }}</a></h3>
-                            </div>
-                        @endforeach
-                    </div>
-                    <div class="paginator">
-                        {!! $results->render() !!}
-                    </div>
-                @endif
-            </div>
+            <form id="search-form" method="get" action="/search">
+                <input name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? $_GET['q'] : '' }}">
+                <button type="submit" class="search-form-submit">
+                    <span class="fa fa-search" aria-hidden="true"></span>
+                </button>
+            </form>
         </div>
         <script src="{{ URL::asset('assets/libraries/foamtree-3.4.2/carrotsearch.foamtree.js') }}"></script>
         <script>
             var foamtree = new CarrotSearchFoamTree({
-                id: "visualization"
-            });
-            foamtree.set({
-                dataObject: { groups: [ { label: "Please wait..." } ] },
-                fadeDuration: 500,
-                rectangleAspectRatioPreference: 0,
-                stacking: 'flattened'
+                id: "visualization",
+                onGroupClick: function (event) {
+                    if ('url' in event.group) {
+                        event.preventDefault();
+//                        window.location = event.group.url;
+                    }
+                },
+                fadeDuration: 500
             });
             window.addEventListener("load", function() {
                 $.ajax({
@@ -50,12 +35,11 @@
                     dataType: "json",
                     jsonpCallback: "callback",
                     success: function(data) {
-                        var states = data.response;
-
                         var groups = data.map(function(obj) {
-                            console.log(obj);
                             return {
                                 label: obj.title,
+                                url: obj.url,
+                                displayUrl: obj.displayUrl,
                                 weight: 1
                             };
                         });
