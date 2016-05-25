@@ -23,7 +23,7 @@ class BingConsumer extends AbstractWebSearchEngine
   }
 
   private function buildSearchUrl($query, $start) {
-    return $this->url . '?Query=' . urlencode($query) . '&$skip=' . $start . '&Adult=%27Strict%27&$format=json';
+    return $this->url . '?Query=%27' . urlencode($query) . '%27&$skip=' . $start . '&Adult=%27Strict%27&$format=json';
   }
 
   private function makeSearchRequest($query, $start) {
@@ -62,7 +62,6 @@ class BingConsumer extends AbstractWebSearchEngine
     $start = 0;
     $response = $this->makeSearchRequest($query, $start);
     $json = json_decode($response);
-    dd($json);
     return $items;
   }
 }
