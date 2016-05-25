@@ -14,8 +14,12 @@ class SearchController extends Controller
     return view('search.home');
   }
 
-  public function search(Request $request)
-  {
+  /**
+   * @param \Illuminate\Http\Request $request
+   * @return \Illuminate\Pagination\LengthAwarePaginator
+   * @throws \Exception
+   */
+  public function getSearchResults(Request $request) {
     $query = $request->get('q');
     $gc = new GoogleCrawler();
     $results = [];
@@ -30,7 +34,13 @@ class SearchController extends Controller
       'path'  => $request->url(),
       'query' => $request->query(),
     ]);
+    return $paginatedSearchResults;
+  }
+
+  public function search(Request $request)
+  {
+    $results = $this->getSearchResults($request);
     return view('search.home')
-      ->with('results', $paginatedSearchResults);
+      ->with('results', $results);
   }
 }
