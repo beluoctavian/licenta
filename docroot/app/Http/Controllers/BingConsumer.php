@@ -70,11 +70,11 @@ class BingConsumer extends AbstractWebSearchEngine
             break;
           }
           $item = [];
-          $item['url'] = $item['displayUrl'] = $item['title'] = $item['summary'] = $item['content'] = NULL;
           $item['url'] = $result->Url;
           $item['displayUrl'] = $result->DisplayUrl;
           $item['title'] = $result->Title;
           $item['summary'] = $result->Description;
+          $item['content'] = NULL;
           $items[] = $item;
         }
       }
