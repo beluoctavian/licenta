@@ -19,13 +19,24 @@ class SearchController extends Controller
    * @return \Illuminate\Pagination\LengthAwarePaginator
    * @throws \Exception
    */
-  public function getSearchResults(Request $request) {
+  public function getSearchResults(Request $request, $engine = 'bing') {
     $query = $request->get('q');
-    $gc = new GoogleCrawler();
     $results = [];
-    if (!empty($query)) {
-      $results = $gc->search($query, 20);
+    switch ($engine) {
+      case 'google':
+        $gc = new GoogleCrawler();
+        if (!empty($query)) {
+          $results = $gc->search($query, 20);
+        }
+        break;
+      default:
+        $bc = new BingConsumer();
+        if (!empty($query)) {
+          $results = $bc->search($query);
+        }
+        break;
     }
+
     $perPage = 10;
     $currentPage = LengthAwarePaginator::resolveCurrentPage();
     $collection = new Collection($results);
@@ -40,6 +51,7 @@ class SearchController extends Controller
   public function search(Request $request)
   {
     $results = $this->getSearchResults($request);
+
     return view('search.home')
       ->with('results', $results);
   }

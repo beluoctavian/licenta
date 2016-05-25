@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 
-class GoogleCrawler extends Controller
+class GoogleCrawler extends AbstractWebSearchEngine
 {
   private $url;
   private $resultsContainerId = 'res';
