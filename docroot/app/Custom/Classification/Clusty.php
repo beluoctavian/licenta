@@ -100,6 +100,7 @@ class Clusty
     }
     $clusters = array_values($clusters);
     $other_cluster = [];
+    $min_children = 0;
     foreach ($clusters as $key => $cluster) {
       if (count($cluster['children']) == 1) {
         if (empty($other_cluster)) {
@@ -113,8 +114,14 @@ class Clusty
         $other_cluster['weight']++;
         unset($clusters[$key]);
       }
+      else {
+        if (empty($min_children) || $cluster['children'] < $min_children) {
+          $min_children = $cluster['children'];
+        }
+      }
     }
     if (!empty($other_cluster)) {
+      $other_cluster['weight'] = $min_children;
       $clusters[] = $other_cluster;
     }
 
