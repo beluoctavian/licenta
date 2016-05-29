@@ -37,10 +37,12 @@ class Clusty extends Controller
   {
     $text = trim(preg_replace("/[^0-9a-z]+/i", " ", $text));
     $words = explode(' ', $text);
-    $categories = [];
+    $categories = [
+      'other' => 0,
+    ];
     foreach ($words as $word) {
       $word = strtolower((string) $word);
-      if (strlen($word) > 2) {
+      if (strlen($word) > 3) {
         if (empty($categories[$word])) {
           $categories[$word] = 0;
         }
