@@ -154,22 +154,28 @@ class Clusty
     $clusters = array_values($clusters);
     $other_cluster = [];
     $min_weight = 1000;
+    $max_weight = 0;
     foreach ($clusters as $key => $cluster) {
-      if (count($cluster['children']) == 1) {
-        if (empty($other_cluster)) {
-          $other_cluster = [
-            'title' => 'other',
-            'children' => [],
-            'weight' => 0,
-          ];
-        }
-        $other_cluster['children'][] = $cluster;
-        $other_cluster['weight']++;
-        unset($clusters[$key]);
+      if ($cluster['weight'] < $min_weight) {
+        $min_weight = $cluster['weight'];
       }
-      else {
-        if (empty($min_children) || $cluster['weight'] < $min_children) {
-          $min_weight = $cluster['weight'];
+      if ($cluster['weight'] > $max_weight) {
+        $max_weight = $cluster['weight'];
+      }
+    }
+    if (count($clusters) > 10) {
+      foreach ($clusters as $key => $cluster) {
+        if (count($cluster['children']) == $min_weight) {
+          if (empty($other_cluster)) {
+            $other_cluster = [
+              'title' => 'other',
+              'children' => [],
+              'weight' => 0,
+            ];
+          }
+          $other_cluster['children'][] = $cluster;
+          $other_cluster['weight']++;
+          unset($clusters[$key]);
         }
       }
     }
