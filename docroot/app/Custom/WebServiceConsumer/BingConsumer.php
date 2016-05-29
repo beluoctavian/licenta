@@ -12,11 +12,6 @@ class BingConsumer extends AbstractWebSearchEngine
   private $url;
   private $account_key;
   private $customer_id;
-  /**
-   * Cache expire in minutes.
-   * @var int
-   */
-  private $cache_expire = 28800;
 
   /**
    * BingConsumer constructor.
@@ -39,10 +34,6 @@ class BingConsumer extends AbstractWebSearchEngine
     curl_setopt($process, CURLOPT_TIMEOUT, 30);
     curl_setopt($process, CURLOPT_RETURNTRANSFER, TRUE);
     return curl_exec($process);
-  }
-
-  private function getWebsiteCacheKey($url) {
-    return 'website_' . urlencode($url);
   }
 
   private function getCacheKey($query, $start) {
@@ -101,37 +92,7 @@ class BingConsumer extends AbstractWebSearchEngine
       $start += 50;
     }
     if ($advanced === TRUE) {
-      foreach ($items as $key => $item) {
-        try {
-          $content = \Cache::get($this->getWebsiteCacheKey($item['url']));
-          if (empty($content)) {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $item['url']);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-            $data = curl_exec($ch);
-            curl_close($ch);
-
-            // Just because that: http://php.net/manual/ro/domdocument.loadhtml.php#95463
-            libxml_use_internal_errors(TRUE);
-
-            $d = new \DOMDocument;
-            $mock = new \DOMDocument;
-            $d->loadHTML($data);
-            $body = $d->getElementsByTagName('body')->item(0);
-            foreach ($body->childNodes as $child){
-              $mock->appendChild($mock->importNode($child, true));
-            }
-            $content = trim(preg_replace("/[^0-9a-z]+/i", " ", $mock->textContent));
-            $expiresAt = Carbon::now()->addMinutes($this->cache_expire);
-            \Cache::put($this->getWebsiteCacheKey($item['url']), $content, $expiresAt);
-          }
-          $items[$key]['content'] = $content;
-        }
-        catch (\Exception $e) {
-          \Log::error("Could not get full content of website {$item['url']}.\nError: {$e->getMessage()}");
-        }
-      }
+      $this->createAdvancedSearch($items);
     }
     return $items;
   }

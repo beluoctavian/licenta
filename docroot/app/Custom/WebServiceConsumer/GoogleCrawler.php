@@ -98,6 +98,9 @@ class GoogleCrawler extends AbstractWebSearchEngine
       }
       $start += 10;
     }
+    if ($advanced === TRUE) {
+      $this->createAdvancedSearch($items);
+    }
 
     return $items;
   }
