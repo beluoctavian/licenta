@@ -16,6 +16,7 @@
                     <span class="fa fa-search" aria-hidden="true"></span>
                 </button>
             </form>
+            <div id="please_wait">Please wait...</div>
         </div>
         <script src="{{ URL::asset('assets/libraries/foamtree-3.4.2/carrotsearch.foamtree.js') }}"></script>
         <script>
@@ -53,6 +54,7 @@
                     dataType: "json",
                     jsonpCallback: "callback",
                     success: function(data) {
+                        $('#please_wait').hide();
                         var groups = data.map(createGroupNode);
 
                         foamtree.set({

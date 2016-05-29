@@ -17,3 +17,7 @@ body {
   position: relative;
   left: -50%;
 }
+.container #please_wait {
+  position: relative;
+  left: -50%;
+}
