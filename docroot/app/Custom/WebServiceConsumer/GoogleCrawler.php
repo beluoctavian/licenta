@@ -3,6 +3,7 @@
 namespace App\Custom\WebServiceConsumer;
 
 use App\Http\Requests;
+use Carbon\Carbon;
 
 class GoogleCrawler extends AbstractWebSearchEngine
 {
@@ -20,6 +21,11 @@ class GoogleCrawler extends AbstractWebSearchEngine
   private function buildSearchUrl($query, $start) {
     return $this->url . '/search?q=' . urlencode($query) . '&start=' . $start;
   }
+
+  private function getCacheKey($query, $start) {
+    return 'google_' . urlencode($query) . '_' . $start;
+  }
+
 
   /**
    * Returns Google search results for a specific query.
@@ -48,19 +54,24 @@ class GoogleCrawler extends AbstractWebSearchEngine
     $start = 0 ;
 
     while (count($items) < $limit) {
-      $url = $this->buildSearchUrl($query, $start);
-      $ch = curl_init($url);
-      curl_setopt($ch, CURLOPT_HEADER, TRUE);
-      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      $contents = curl_exec($ch);
-      curl_close($ch);
-      $redirect_url = NULL;
-      if (preg_match('#Location: (.*)#', $contents, $r)) {
-        $redirect_url = trim($r[1]);
+      $contents = \Cache::get($this->getCacheKey($query, $start));
+      if (empty($json)) {
+        $url = $this->buildSearchUrl($query, $start);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, TRUE);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        $contents = curl_exec($ch);
+        curl_close($ch);
+        $redirect_url = NULL;
+        if (preg_match('#Location: (.*)#', $contents, $r)) {
+          $redirect_url = trim($r[1]);
+        }
+        $url = $redirect_url ?: $url;
+        $contents = file_get_contents($url);
+        $expiresAt = Carbon::now()->addMinutes($this->cache_expire);
+        \Cache::put($this->getCacheKey($query, $start), $contents, $expiresAt);
       }
-      $url = $redirect_url ?: $url;
-      $contents = file_get_contents($url);
       $doc = new \DOMDocument();
 
       // Just because that: http://php.net/manual/ro/domdocument.loadhtml.php#95463
