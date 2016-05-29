@@ -84,9 +84,10 @@ class Clusty
 
   public static function groupByCategory(array $results) {
     $clusters = [];
+    $omit = explode(' ', $_GET['q']);
     foreach ($results as $result) {
       $text = !empty($result['content']) ? $result['content'] : $result['summary'];
-      $category = self::classifyText($text);
+      $category = self::classifyText($text, 'en', $omit);
       if (empty($clusters[$category])) {
         $clusters[$category] = [
           'title' => $category,
