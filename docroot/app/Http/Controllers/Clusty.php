@@ -33,7 +33,29 @@ class Clusty extends Controller
     return array_values($groups);
   }
 
-  public static function classifyText($text)
+  /**
+   * @param string $word
+   * @return bool
+   */
+  private static function isValidWord($word) {
+    if (strlen($word) <= 3) {
+      return FALSE;
+    }
+    if (preg_match('/\\d/', $word) > 0) {
+      return FALSE;
+    }
+    return TRUE;
+  }
+
+  /**
+   * @param string $text
+   *  Text to be classified.
+   * @param array $omit
+   *  Array of words to omit.
+   * @return string
+   *  Text category.
+   */
+  public static function classifyText($text, array $omit = [])
   {
     $text = trim(preg_replace("/[^0-9a-z]+/i", " ", $text));
     $words = explode(' ', $text);
@@ -42,7 +64,7 @@ class Clusty extends Controller
     ];
     foreach ($words as $word) {
       $word = strtolower((string) $word);
-      if (strlen($word) > 3) {
+      if (self::isValidWord($word) && !in_array($text, $omit)) {
         if (empty($categories[$word])) {
           $categories[$word] = 0;
         }
