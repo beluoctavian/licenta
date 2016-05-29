@@ -22,7 +22,10 @@ class SearchController extends Controller
    */
   public function getSearchResults(Request $request)
   {
-    $query = $request->get('q');
+    $query = trim($request->get('q'));
+    if (empty($query)) {
+      return [];
+    }
     $number = $request->get('n') ?: 10;
     $engine = $request->get('engine') ?: 'bing';
     $advanced = $request->get('advanced') ? TRUE : FALSE;

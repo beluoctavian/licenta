@@ -11,7 +11,7 @@
         <div id="visualization"></div>
         <div class="container">
             <form id="search-form" method="get" action="/search">
-                <input name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? $_GET['q'] : '' }}">
+                <input name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? trim($_GET['q']) : '' }}">
                 <select name="n">
                     <option value="10" {{ !empty($_GET['n']) && $_GET['n'] == '10' ? 'selected' : '' }}>10</option>
                     <option value="20" {{ !empty($_GET['n']) && $_GET['n'] == '20' ? 'selected' : '' }}>20</option>
