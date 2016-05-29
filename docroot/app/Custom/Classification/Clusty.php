@@ -113,15 +113,17 @@ class Clusty
       $d->loadHTML($text);
       $body = $d->getElementsByTagName('body')->item(0);
       foreach ($body->childNodes as $child) {
-        if ($child->nodeType !== 1) {
-          continue;
-        }
         if (!empty($child->textContent)) {
           $this->classifyHtmlElement($categories, $child);
         }
       }
     }
     catch (\Exception $e) {
+    }
+    foreach ($categories as $word => $num) {
+      if (in_array($word, $stopwords) || in_array($word, $omit)) {
+        unset($categories[$word]);
+      }
     }
     asort($categories, SORT_NUMERIC);
     $categories = array_reverse($categories);
