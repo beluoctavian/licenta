@@ -13,14 +13,14 @@
             <form id="search-form" method="get" action="/search">
                 <input name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? $_GET['q'] : '' }}">
                 <select name="n">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
+                    <option value="10" {{ !empty($_GET['n']) && $_GET['n'] == '10' ? 'selected' : '' }}>10</option>
+                    <option value="20" {{ !empty($_GET['n']) && $_GET['n'] == '20' ? 'selected' : '' }}>20</option>
+                    <option value="50" {{ !empty($_GET['n']) && $_GET['n'] == '50' ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ !empty($_GET['n']) && $_GET['n'] == '100' ? 'selected' : '' }}>100</option>
                 </select>
                 <select name="engine">
-                    <option value="bing">Bing</option>
-                    <option value="google">Google</option>
+                    <option value="bing" {{ !empty($_GET['engine']) && $_GET['engine'] == 'bing' ? 'selected' : '' }}>Bing</option>
+                    <option value="google" {{ !empty($_GET['engine']) && $_GET['engine'] == 'google' ? 'selected' : '' }}>Google</option>
                 </select>
                 <input type="checkbox" name="advanced" value="1" {{ !empty($_GET['advanced']) ? 'checked' : '' }}> <span>Advanced</span>
                 <button type="submit" class="search-form-submit">
