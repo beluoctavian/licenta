@@ -91,6 +91,26 @@ class Clusty extends Controller
       $clusters[$category]['children'][] = $result;
       $clusters[$category]['weight']++;
     }
+    $clusters = array_values($clusters);
+    $other_cluster = [];
+    foreach ($clusters as $key => $cluster) {
+      if (count($cluster['children']) == 1) {
+        if (empty($other_cluster)) {
+          $other_cluster = [
+            'title' => 'other',
+            'children' => [],
+            'weight' => 0,
+          ];
+        }
+        $other_cluster['children'][] = $cluster;
+        $other_cluster['weight']++;
+        unset($clusters[$key]);
+      }
+    }
+    if (!empty($other_cluster)) {
+      $clusters[] = $other_cluster;
+    }
+
     return array_values($clusters);
   }
 }
