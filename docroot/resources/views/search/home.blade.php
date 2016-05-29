@@ -61,7 +61,7 @@
             });
             window.addEventListener("load", function() {
                 $.ajax({
-                    url: "{{ URL::to('/getSearchResults?q=' . (!empty($_GET['q']) ? $_GET['q'] : '')) }}",
+                    url: "{{ URL::to('/getSearchResults') }}" + window.location.search,
                     dataType: "json",
                     jsonpCallback: "callback",
                     success: function(data) {

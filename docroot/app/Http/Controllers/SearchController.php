@@ -20,21 +20,25 @@ class SearchController extends Controller
    * @return \Illuminate\Pagination\LengthAwarePaginator
    * @throws \Exception
    */
-  public function getSearchResults(Request $request, $engine = 'bing')
+  public function getSearchResults(Request $request)
   {
     $query = $request->get('q');
+    $number = $request->get('n') ?: 10;
+    $engine = $request->get('engine') ?: 'bing';
+    $advanced = $request->get('advanced') ? TRUE : FALSE;
+
     $results = [];
     switch ($engine) {
       case 'google':
         $gc = new GoogleCrawler();
         if (!empty($query)) {
-          $results = $gc->search($query, 20);
+          $results = $gc->search($query, $number, $advanced);
         }
         break;
       default:
         $bc = new BingConsumer();
         if (!empty($query)) {
-          $results = $bc->search($query, 100, TRUE);
+          $results = $bc->search($query, $number, $advanced);
         }
         break;
     }
