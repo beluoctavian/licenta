@@ -24,7 +24,7 @@ class BingConsumer extends AbstractWebSearchEngine
   }
 
   private function buildSearchUrl($query, $start) {
-    return $this->url . '?Query=%27' . urlencode($query) . '%27&$skip=' . $start . '&Adult=%27Strict%27&$format=json';
+    return $this->url . '?Query=%27' . urlencode($query) . '%27&$skip=' . $start . '&Options=%27DisableLocationDetection%27&Market=%27en-GB%27&Adult=%27Strict%27&$format=json';
   }
 
   private function makeSearchRequest($query, $start) {
