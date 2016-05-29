@@ -33,12 +33,15 @@ class Clusty
    * @param string $word
    * @return bool
    */
-  private static function isValidWord($word) {
-    if (strlen($word) <= 3) {
-      return FALSE;
-    }
-    if (preg_match('/\\d/', $word) > 0) {
-      return FALSE;
+  private static function isValidWord($word, $language = 'en') {
+    $conditions = [
+      strlen($word) <= 3,
+      (preg_match('/\\d/', $word) > 0),
+    ];
+    foreach ($conditions as $condition) {
+      if ($condition == TRUE) {
+        return FALSE;
+      }
     }
     return TRUE;
   }
@@ -51,8 +54,15 @@ class Clusty
    * @return string
    *  Text category.
    */
-  public static function classifyText($text, array $omit = [])
+  public static function classifyText($text, $language = 'en', array $omit = [])
   {
+    $stopwordsArr = array_map('str_getcsv', file(__DIR__ . "/stopwords/{$language}.csv"));
+    $stopwords = [];
+    foreach ($stopwordsArr as $row) {
+      foreach ($row as $col => $val) {
+        $stopwords[] = $val;
+      }
+    }
     $text = trim(preg_replace("/[^0-9a-z]+/i", " ", $text));
     $words = explode(' ', $text);
     $categories = [
@@ -60,7 +70,7 @@ class Clusty
     ];
     foreach ($words as $word) {
       $word = strtolower((string) $word);
-      if (self::isValidWord($word) && !in_array($text, $omit)) {
+      if (self::isValidWord($word) && !in_array($text, $stopwords) && !in_array($text, $omit)) {
         if (empty($categories[$word])) {
           $categories[$word] = 0;
         }
