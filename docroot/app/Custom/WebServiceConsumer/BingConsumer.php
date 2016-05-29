@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Custom\WebServiceConsumer;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;

@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use App\Custom\WebServiceConsumer\GoogleCrawler;
+use App\Custom\WebServiceConsumer\BingConsumer;
+use App\Custom\Classification\Clusty;
 
 class SearchController extends Controller
 {

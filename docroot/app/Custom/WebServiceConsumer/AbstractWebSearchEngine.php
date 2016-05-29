@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Custom\WebServiceConsumer;
 
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
-abstract class AbstractWebSearchEngine extends Controller
+abstract class AbstractWebSearchEngine
 {
   abstract public function search($query, $limit, $advanced);
 }

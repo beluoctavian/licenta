@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Custom\WebServiceConsumer;
 
 use App\Http\Requests;
 

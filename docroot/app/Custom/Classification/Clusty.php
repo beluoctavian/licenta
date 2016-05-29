@@ -1,12 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Custom\Classification;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-
-class Clusty extends Controller
+class Clusty
 {
   /**
    * @param array $results
