@@ -23,30 +23,18 @@ abstract class AbstractWebSearchEngine
   protected function createAdvancedSearch(&$items) {
     foreach ($items as $key => $item) {
       try {
-        $content = \Cache::get($this->getWebsiteCacheKey($item['url']));
-        if (empty($content)) {
+        $data = \Cache::get($this->getWebsiteCacheKey($item['url']));
+        if (empty($data)) {
           $ch = curl_init();
           curl_setopt($ch, CURLOPT_URL, $item['url']);
           curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
           curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
           $data = curl_exec($ch);
           curl_close($ch);
-
-          // Just because that: http://php.net/manual/ro/domdocument.loadhtml.php#95463
-          libxml_use_internal_errors(TRUE);
-
-          $d = new \DOMDocument;
-          $mock = new \DOMDocument;
-          $d->loadHTML($data);
-          $body = $d->getElementsByTagName('body')->item(0);
-          foreach ($body->childNodes as $child){
-            $mock->appendChild($mock->importNode($child, true));
-          }
-          $content = trim(preg_replace("/[^0-9a-z]+/i", " ", $mock->textContent));
           $expiresAt = Carbon::now()->addMinutes($this->cache_expire);
-          \Cache::put($this->getWebsiteCacheKey($item['url']), $content, $expiresAt);
+          \Cache::put($this->getWebsiteCacheKey($item['url']), $data, $expiresAt);
         }
-        $items[$key]['content'] = $content;
+        $items[$key]['content'] = $data;
       }
       catch (\Exception $e) {
         \Log::error("Could not get full content of website {$item['url']}.\nError: {$e->getMessage()}");
