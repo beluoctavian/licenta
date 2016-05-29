@@ -42,19 +42,7 @@ class SearchController extends Controller
 
   public function search(Request $request)
   {
-    return view('search.home');
     $results = $this->getSearchResults($request);
-
-    $perPage = 10;
-    $currentPage = LengthAwarePaginator::resolveCurrentPage();
-    $collection = new Collection($results);
-    $currentPageSearchResults = $collection->slice(($currentPage-1) * $perPage, $perPage)->all();
-    $paginatedSearchResults = new LengthAwarePaginator($currentPageSearchResults, count($collection), $perPage, $currentPage, [
-      'path'  => $request->url(),
-      'query' => $request->query(),
-    ]);
-
-    return view('search.home')
-      ->with('results', $paginatedSearchResults);
+    return view('search.home');
   }
 }
