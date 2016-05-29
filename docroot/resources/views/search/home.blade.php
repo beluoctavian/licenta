@@ -72,7 +72,8 @@
                             dataObject: { groups: groups },
                             rolloutDuration: 3000
                         });
-                    }
+                    },
+                    timeout: 30000
                 });
             });
             window.addEventListener("resize", (function() {

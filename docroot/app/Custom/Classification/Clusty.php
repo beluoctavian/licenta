@@ -146,6 +146,8 @@ class Clusty
           'weight' => 0,
         ];
       }
+      unset ($result['content']);
+      unset ($result['summary']);
       $clusters[$category]['children'][] = $result;
       $clusters[$category]['weight']++;
     }
