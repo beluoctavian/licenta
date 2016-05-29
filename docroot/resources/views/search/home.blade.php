@@ -12,6 +12,17 @@
         <div class="container">
             <form id="search-form" method="get" action="/search">
                 <input name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? $_GET['q'] : '' }}">
+                <select name="n">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <select name="engine">
+                    <option value="bing">Bing</option>
+                    <option value="google">Google</option>
+                </select>
+                <input type="checkbox" name="advanced" value="1" {{ !empty($_GET['advanced']) ? 'checked' : '' }}> <span>Advanced</span>
                 <button type="submit" class="search-form-submit">
                     <span class="fa fa-search" aria-hidden="true"></span>
                 </button>
