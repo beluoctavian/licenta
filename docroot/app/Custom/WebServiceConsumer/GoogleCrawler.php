@@ -55,7 +55,7 @@ class GoogleCrawler extends AbstractWebSearchEngine
 
     while (count($items) < $limit) {
       $contents = \Cache::get($this->getCacheKey($query, $start));
-      if (empty($json)) {
+      if (empty($contents)) {
         $url = $this->buildSearchUrl($query, $start);
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, TRUE);
