@@ -133,6 +133,9 @@ class Clusty
   public function groupByCategory(array $results) {
     $clusters = [];
     $omit = explode(' ', $_GET['q']);
+    foreach ($omit as $o) {
+      $omit[] = $o . 's';
+    }
     foreach ($results as $result) {
       $text = !empty($result['content']) ? $result['content'] : $result['summary'];
       $category = $this->classifyText($text, 'en', $omit);
@@ -148,7 +151,7 @@ class Clusty
     }
     $clusters = array_values($clusters);
     $other_cluster = [];
-    $min_weight = 0;
+    $min_weight = 1000;
     foreach ($clusters as $key => $cluster) {
       if (count($cluster['children']) == 1) {
         if (empty($other_cluster)) {
@@ -164,7 +167,7 @@ class Clusty
       }
       else {
         if (empty($min_children) || $cluster['weight'] < $min_children) {
-          $min_children = $cluster['weight'];
+          $min_weight = $cluster['weight'];
         }
       }
     }
