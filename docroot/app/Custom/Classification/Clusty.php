@@ -4,11 +4,20 @@ namespace App\Custom\Classification;
 
 class Clusty
 {
+  private $htmlElementsWeight = [
+    'div' => 1,
+    'span' => 1,
+  ];
+
+  private $htmlSkipTags = [
+    'script', 'img', 'br',
+  ];
+
   /**
    * @param array $results
    * @return array
    */
-  public static function groupByWebsite(array $results)
+  public function groupByWebsite(array $results)
   {
     $groups = [];
     foreach ($results as $result) {
@@ -33,7 +42,7 @@ class Clusty
    * @param string $word
    * @return bool
    */
-  private static function isValidWord($word, $language = 'en') {
+  private function isValidWord($word, $language = 'en') {
     $conditions = [
       strlen($word) <= 3,
       (preg_match('/\\d/', $word) > 0),
@@ -46,6 +55,31 @@ class Clusty
     return TRUE;
   }
 
+  private function classifyHtmlElement(array &$categories, $element, $weight = 1) {
+    if (in_array($element->nodeName, $this->htmlSkipTags)) {
+      return;
+    }
+    if ($element->hasChildNodes() && $element->nodeType === 1) {
+      foreach ($element->childNodes as $child) {
+        $htmlElementWeight = !empty($this->htmlElementsWeight[$element->nodeName]) ? $this->htmlElementsWeight[$element->nodeName] : 1;
+        $this->classifyHtmlElement($categories, $child, $weight * $htmlElementWeight);
+      }
+    }
+    else {
+      $text = trim(preg_replace("/[^0-9a-z]+/i", " ", $element->textContent));
+      $words = explode(' ', $text);
+      foreach ($words as $word) {
+        $word = strtolower((string) $word);
+        if ($this->isValidWord($word)) {
+          if (empty($categories[$word])) {
+            $categories[$word] = 0;
+          }
+          $categories[$word] += $weight;
+        }
+      }
+    }
+  }
+
   /**
    * @param string $text
    *  Text to be classified.
@@ -54,7 +88,7 @@ class Clusty
    * @return string
    *  Text category.
    */
-  public static function classifyText($text, $language = 'en', array $omit = [])
+  public function classifyText($text, $language = 'en', array $omit = [])
   {
     $stopwordsArr = array_map('str_getcsv', file(__DIR__ . "/stopwords/{$language}.csv"));
     $stopwords = [];
@@ -63,18 +97,36 @@ class Clusty
         $stopwords[] = $val;
       }
     }
-    $text = trim(preg_replace("/[^0-9a-z]+/i", " ", $text));
-    $words = explode(' ', $text);
     $categories = [
       'other' => 0,
     ];
-    foreach ($words as $word) {
-      $word = strtolower((string) $word);
-      if (self::isValidWord($word) && !in_array($word, $stopwords) && !in_array($word, $omit)) {
-        if (empty($categories[$word])) {
-          $categories[$word] = 0;
+
+    libxml_use_internal_errors(true);
+    libxml_clear_errors();
+    $d = new \DOMDocument;
+    $d->loadHTML($text);
+    if (empty(libxml_get_errors())) {
+      $body = $d->getElementsByTagName('body')->item(0);
+      foreach ($body->childNodes as $child) {
+        if ($child->nodeType !== 1) {
+          continue;
         }
-        $categories[$word] ++;
+        if (!empty($child->textContent)) {
+          $this->classifyHtmlElement($categories, $child);
+        }
+      }
+    }
+    else {
+      $text = trim(preg_replace("/[^0-9a-z]+/i", " ", $text));
+      $words = explode(' ', $text);
+      foreach ($words as $word) {
+        $word = strtolower((string) $word);
+        if ($this->isValidWord($word) && !in_array($word, $stopwords) && !in_array($word, $omit)) {
+          if (empty($categories[$word])) {
+            $categories[$word] = 0;
+          }
+          $categories[$word] ++;
+        }
       }
     }
     asort($categories, SORT_NUMERIC);
@@ -82,12 +134,12 @@ class Clusty
     return key($categories);
   }
 
-  public static function groupByCategory(array $results) {
+  public function groupByCategory(array $results) {
     $clusters = [];
     $omit = explode(' ', $_GET['q']);
     foreach ($results as $result) {
       $text = !empty($result['content']) ? $result['content'] : $result['summary'];
-      $category = self::classifyText($text, 'en', $omit);
+      $category = $this->classifyText($text, 'en', $omit);
       if (empty($clusters[$category])) {
         $clusters[$category] = [
           'title' => $category,

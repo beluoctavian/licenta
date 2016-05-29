@@ -42,7 +42,8 @@ class SearchController extends Controller
         }
         break;
     }
-    return Clusty::groupByCategory($results);
+    $clusty = new Clusty();
+    return $clusty->groupByCategory($results);
   }
 
   public function search(Request $request)
