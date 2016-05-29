@@ -70,7 +70,7 @@ class Clusty
     ];
     foreach ($words as $word) {
       $word = strtolower((string) $word);
-      if (self::isValidWord($word) && !in_array($text, $stopwords) && !in_array($text, $omit)) {
+      if (self::isValidWord($word) && !in_array($word, $stopwords) && !in_array($word, $omit)) {
         if (empty($categories[$word])) {
           $categories[$word] = 0;
         }
