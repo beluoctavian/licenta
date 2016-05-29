@@ -11,6 +11,7 @@
         <div id="visualization"></div>
         <div class="container">
             <form id="search-form" method="get" action="/search">
+                <a href="{{ URL::to('/') }}">Home</a>
                 <input name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? trim($_GET['q']) : '' }}">
                 <select name="n">
                     <option value="10" {{ !empty($_GET['n']) && $_GET['n'] == '10' ? 'selected' : '' }}>10</option>
