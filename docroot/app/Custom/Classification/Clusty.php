@@ -7,6 +7,11 @@ class Clusty
   private $htmlElementsWeight = [
     'div' => 1,
     'span' => 1,
+    'h1' => 6,
+    'h2' => 5,
+    'h3' => 4,
+    'h4' => 3,
+    'h5' => 2,
   ];
 
   private $htmlSkipTags = [
@@ -101,11 +106,11 @@ class Clusty
       'other' => 0,
     ];
 
-    libxml_use_internal_errors(true);
-    libxml_clear_errors();
-    $d = new \DOMDocument;
-    $d->loadHTML($text);
-    if (empty(libxml_get_errors())) {
+    try {
+      libxml_use_internal_errors(true);
+      libxml_clear_errors();
+      $d = new \DOMDocument;
+      $d->loadHTML($text);
       $body = $d->getElementsByTagName('body')->item(0);
       foreach ($body->childNodes as $child) {
         if ($child->nodeType !== 1) {
@@ -116,18 +121,7 @@ class Clusty
         }
       }
     }
-    else {
-      $text = trim(preg_replace("/[^0-9a-z]+/i", " ", $text));
-      $words = explode(' ', $text);
-      foreach ($words as $word) {
-        $word = strtolower((string) $word);
-        if ($this->isValidWord($word) && !in_array($word, $stopwords) && !in_array($word, $omit)) {
-          if (empty($categories[$word])) {
-            $categories[$word] = 0;
-          }
-          $categories[$word] ++;
-        }
-      }
+    catch (\Exception $e) {
     }
     asort($categories, SORT_NUMERIC);
     $categories = array_reverse($categories);
