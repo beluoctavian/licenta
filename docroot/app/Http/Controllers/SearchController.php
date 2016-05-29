@@ -42,6 +42,7 @@ class SearchController extends Controller
 
   public function search(Request $request)
   {
+    return view('search.home');
     $results = $this->getSearchResults($request);
 
     $perPage = 10;
