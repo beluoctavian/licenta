@@ -34,7 +34,7 @@ class SearchController extends Controller
       default:
         $bc = new BingConsumer();
         if (!empty($query)) {
-          $results = $bc->search($query, 50, TRUE);
+          $results = $bc->search($query, 100, TRUE);
         }
         break;
     }
