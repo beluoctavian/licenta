@@ -33,11 +33,11 @@ class SearchController extends Controller
       default:
         $bc = new BingConsumer();
         if (!empty($query)) {
-          $results = $bc->search($query);
+          $results = $bc->search($query, 50, TRUE);
         }
         break;
     }
-    return Clusty::groupByWebsite($results);
+    return Clusty::groupByCategory($results);
   }
 
   public function search(Request $request)
