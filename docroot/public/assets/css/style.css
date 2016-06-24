@@ -11,13 +11,30 @@ body {
 .container {
   position: absolute;
   top: 20px;
-  left: 50%;
-}
-.container #search-form {
-  position: relative;
-  left: -50%;
+  width: 100%;
+  margin: 0;
 }
 .container #please_wait {
-  position: relative;
-  left: -50%;
+  position: absolute;
+  top: 50px;
+  left: 50%;
+}
+select, input.text {
+  height: 28px;
+  line-height: 28px;
+}
+input.text, .panel {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+input.checkbox {
+  display: inline-block;
+}
+.btn {
+  padding-top: 5px;
+  padding-bottom: 3px;
+}
+.panel {
+  height: 26px;
+  display: inline-block;
 }

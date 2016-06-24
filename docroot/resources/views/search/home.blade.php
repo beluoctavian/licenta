@@ -3,10 +3,12 @@
     <head>
         <title>Search{{ !empty($_GET['q']) ? " for '{$_GET['q']}'" : '' }}</title>
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+
         <link rel="stylesheet" href="{{ URL::asset('assets/libraries/bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ URL::asset('assets/css/style.css') }}">
+
         <script src="{{ URL::asset('assets/libraries/jquery/jquery-1.12.4.min.js') }}"></script>
         <script src="{{ URL::asset('assets/libraries/bootstrap/js/bootstrap.min.js') }}"></script>
-        <link rel="stylesheet" href="{{ URL::asset('assets/css/style.css') }}">
     </head>
     <body>
         <div id="visualization"></div>
@@ -15,7 +17,7 @@
                 <div class="col-xs-12 text-center">
                     <form id="search-form" method="get" action="/search">
                         <a class="btn btn-primary" href="{{ URL::to('/') }}">Home</a>
-                        <input name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? trim($_GET['q']) : '' }}">
+                        <input class="text" name="q" type="text" maxlength="2048" class="search-text" value="{{ !empty($_GET['q']) ? trim($_GET['q']) : '' }}">
                         <select name="n">
                             <option value="10" {{ !empty($_GET['n']) && $_GET['n'] == '10' ? 'selected' : '' }}>10</option>
                             <option value="20" {{ !empty($_GET['n']) && $_GET['n'] == '20' ? 'selected' : '' }}>20</option>
@@ -26,7 +28,10 @@
                             <option value="bing" {{ !empty($_GET['engine']) && $_GET['engine'] == 'bing' ? 'selected' : '' }}>Bing</option>
                             <option value="google" {{ !empty($_GET['engine']) && $_GET['engine'] == 'google' ? 'selected' : '' }}>Google</option>
                         </select>
-                        <input type="checkbox" name="advanced" value="1" {{ !empty($_GET['advanced']) ? 'checked' : '' }}> <span>Advanced</span>
+                        <span class="panel">
+                            <input class="checkbox" type="checkbox" name="advanced" value="1" {{ !empty($_GET['advanced']) ? 'checked' : '' }}>
+                            <span>Advanced</span>
+                        </span>
                         <button type="submit" class="search-form-submit btn btn-primary">
                             <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
                         </button>
